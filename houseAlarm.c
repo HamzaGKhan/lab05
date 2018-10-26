@@ -21,16 +21,17 @@ int state0 ()
 {
   while (digitalRead(1) == 1)
   {
-     digitalWrite(1,HIGH) ; /*sets LED 1 ON */
+     digitalWrite(1,HIGH); /*sets LED 1 ON */
      countT(1);         
-     /* digitalWrite(1,LOW) ; delay (500) ;*/
-     digitalWrite(2,LOW) ; /*sets LED 2 OFF */
+     /* digitalWrite(1,LOW); delay (500) ;*/
+     digitalWrite(2,LOW); /*sets LED 2 OFF */
     countT(1);
-    digitalWrite(5,LOW) ; /*mutes the buzzer */
+    digitalWrite(5,LOW); /*mutes the buzzer */
     countT(1);
+    break;
   }
     printf("Alarm_Off");
-    return 1;
+    return 0;
 } 
 
 /*sets the state to Alarm_Arming */
@@ -38,13 +39,13 @@ int state1 ()
 {
 while (digitalRead(1) == 1)
  {
- digitalWrite(5,LOW) ; /*mutes the buzzer */
-  digitalWrite(1,HIGH) ; /*sets LED 1 ON */
+ digitalWrite(5,LOW); /*mutes the buzzer */
+  digitalWrite(1,HIGH); /*sets LED 1 ON */
   countT(1);         
-  digitalWrite(1,LOW) ;/*sets LED 1 OFF */
-  timeT (1) ; 
+  digitalWrite(1,LOW);/*sets LED 1 OFF */
+  countT (1) ; 
   countT(10);
-  digitalWrite(2,HIGH) ; /*sets LED 2 ON */
+  digitalWrite(2,HIGH); /*sets LED 2 ON */
  }
  printf("ALARM_ARMING ");
  return 1;
@@ -56,9 +57,9 @@ int state2 ()
 {
   for (;;) 
    {
-  digitalWrite(1,LOW) ;/*sets LED 1 OFF */
-  digitalWrite(2,HIGH) ; /*sets LED 2 ON */
-  digitalWrite(5,LOW) ; /*mutes the buzzer */
+  digitalWrite(1,LOW);/*sets LED 1 OFF */
+  digitalWrite(2,HIGH); /*sets LED 2 ON */
+  digitalWrite(5,LOW); /*mutes the buzzer */
   
   if (digitalRead(4) == 0) /* If the button is pressed */
      return state0();
@@ -71,12 +72,12 @@ int state2 ()
 /*sets state to alarm triggered*/
 int state3()
 {
-  digitalWrite(5,LOW) ; /*mutes the buzzer */
-  digitalWrite(1,HIGH) ;/*sets LED 1 ON */
-  digitalWrite(2,HIGH) ; /*sets LED 2 ON */
-  timeT(10);
-  digitalWrite(1,LOW) ;/*sets LED 1 OFF */
-  digitalWrite(2,LOW) ; /*sets LED 2 OFF*/
+  digitalWrite(5,LOW); /*mutes the buzzer */
+  digitalWrite(1,HIGH);/*sets LED 1 ON */
+  digitalWrite(2,HIGH); /*sets LED 2 ON */
+  countT(10);
+  digitalWrite(1,LOW);/*sets LED 1 OFF */
+  digitalWrite(2,LOW); /*sets LED 2 OFF*/
   if (digitalRead(4) == 0)
    return state0();
   else
@@ -90,13 +91,13 @@ int state4()
 {
  for(;;)
  {
-  digitalWrite(1,HIGH) ;/*sets LED 1 ON */
-  digitalWrite(2,HIGH) ; /*sets LED 2 ON */
-  digitalWrite(5,HIGH) ; /*plays the buzzer */
-  timeT(2);
-  digitalWrite(1,LOW) ;/*sets LED 1 OFF */
-  digitalWrite(2,LOW) ; /*sets LED 2 OFF*/
-  timeT(2);
+  digitalWrite(1,HIGH);/*sets LED 1 ON */
+  digitalWrite(2,HIGH); /*sets LED 2 ON */
+  digitalWrite(5,HIGH); /*plays the buzzer */
+  countT(2);
+  digitalWrite(1,LOW);/*sets LED 1 OFF */
+  digitalWrite(2,LOW); /*sets LED 2 OFF*/
+  countT(2);
   printf("INTRUDER ALERT!");
   if (digitalRead(4) == 0)
    return state0(); 
@@ -106,36 +107,15 @@ int state4()
 int main(int argc, char *argv[])
 {
   /*clock_t start_t, end_t, total_t; */
-  int state = 0;
-  wiringPiSetup () ;
+  int state = state0();
+  wiringPiSetup ();
   pinMode(0, INPUT); /*Motion Sensor */
   pinMode (1, OUTPUT) ;/*LED 1*/
   pinMode (2, OUTPUT) ;/* LED 2*/
   pinMode (4, INPUT) ;/*Button */
   pinMode (5, OUTPUT); /*Buzzer */
-  
-switch (state) {
-  case '0': 
-      printf("ALARM_OFF ");
-      for (;;) {
-        digitalWrite (1, HIGH) ; /*sets LED 1 ON */
-        /* digitalWrite (1,  LOW) ; delay (500) ; */
-       digitalWrite (2,  LOW) ; /*sets LED 2 OFF */
-    digitalWrite (5, LOW) ; /*mutes the buzzer */
-    state = digitalRead(1); 
-    break;
-  case '1':
-    printf("ALARM_ARMING");
-    digitalWrite (5, LOW) ; /*mutes the buzzer */
-    countT(10);
-    break;   
-}
-
-
-
-
-
-
- return 0;
+  if (state == 0)
+   state = state0();   
+  return 0;
 
 }
