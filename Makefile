@@ -1,6 +1,7 @@
 CC=gcc
 CFLAGS=-lWarn -pedantic
-
+houseAlarm:	houseAlarm.o libmyifttt.a
+	cc houseAlarm.o -L. -lwiringPi -lmyifttt -lcurl -o houseAlarm
 tester: tester.o libmyifttt.a
 	cc tester.o -L. -lmyifttt -lcurl -o tester
 
@@ -21,8 +22,9 @@ ifttt.o: 	ifttt.c ifttt.h
 
 tester.o:	tester.c ifttt.h
 	$(CC) $(CFLAGS) -c -ansi $<
-
-all:	tester irtester blink button
+houseAlarm.o:	houseAlarm.c ifttt.h
+	$(CC) $(CFLAGS) -c -ansi $<
+all:	tester irtester blink button houseAlarm
 
 clean:
 	rm tester irtester *.o
