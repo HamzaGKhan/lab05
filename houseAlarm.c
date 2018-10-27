@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
   wiringPiSetup() ;
   pinMode (1, OUTPUT) ;/*LED 1*/
   pinMode (2, OUTPUT) ;/* LED 2*/
+  pinMode (3,INPUT); /*ir scanner*/
   pinMode (4, INPUT) ;/*Button */
   pullUpDnControl(1,PUD_UP);
   pinMode (5, OUTPUT); /*Buzzer */
@@ -51,9 +52,9 @@ int state0 (int state)
      /*delay(1000);*/
      digitalWrite(5,LOW); /*mutes the buzzer */
     /* delay(1000);*/
-    if (digitalRead(1) == 0){
+    if (digitalRead(3) == 0){
       printf("Alarm_Arming");
-      return state1(state);
+      return 2;
      }
    }
 }
@@ -93,7 +94,7 @@ int state2 (int state)
      digitalWrite(2,HIGH); /*sets LED 2 ON */
      digitalWrite(5,LOW); /*mutes the buzzer */
   
-     if (digitalRead(4) == 0) /* If the button is pressed */
+     if (digitalRead(3) == 0) /* If the button is pressed */
      {
          printf("ALARM IS OFF\n");
          return 1;
@@ -143,7 +144,7 @@ int state4(int state)
   digitalWrite(5,LOW); /*mutes the buzzer */
   delay(2000);
   printf("INTRUDER ALERT!");
-  if (digitalRead(4) == 0)
+  if (digitalRead(3) == 0)
    return state0(state); 
   }
  }
