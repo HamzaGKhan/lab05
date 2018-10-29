@@ -4,6 +4,13 @@
 #include "ifttt.h"
 #include <time.h> 
 
+int state0(int state);
+int state1(int state);
+int state2(int state);
+int state3(int state);
+int state4(int state);
+
+
 int main(int argc, char *argv[])
 {
   /*clock_t start_t, end_t, total_t; */
@@ -11,10 +18,10 @@ int main(int argc, char *argv[])
   wiringPiSetup() ;
   pinMode (1, OUTPUT) ;/*LED 1*/
   pinMode (2, OUTPUT) ;/* LED 2*/
-  pinMode (3,INPUT); /*ir scanner*/
-  pinMode (4, INPUT) ;/*Button */
-  pullUpDnControl(1,PUD_UP);
-  pinMode (5, OUTPUT); /*Buzzer */
+  pinMode (3,INPUT); /*Button*/
+  pinMode (4, INPUT) ;/*Buzzer */
+  pullUpDnControl(3,PUD_UP);
+  pinMode (5, OUTPUT); /*IR Scanner */
   state = 1;
   while (1) 
  {
@@ -23,11 +30,11 @@ int main(int argc, char *argv[])
   state = state2(state); /*Sets to Alarm Armed */
   
   if(state == 4){
-    state = 4;
+    state = state3(state);
     printf("Alarm_Triggered ");
   }
   if (state == 5) {
-   state = 5;
+   state = state4(state);
    printf("Alarm_Sounding");
   }
  }
@@ -50,7 +57,7 @@ int state0 (int state)
      /* delay(1000); */        
      digitalWrite(2,LOW); /*sets LED 2 OFF */
      /*delay(1000);*/
-     digitalWrite(5,LOW); /*mutes the buzzer */
+     digitalWrite(4,LOW); /*mutes the buzzer */
     /* delay(1000);*/
     if (digitalRead(3) == 0){
       printf("Alarm_Arming");
@@ -69,7 +76,7 @@ int state1 (int state)
  if (state == 2)
  {
   printf("Alarm_Arming");
-  digitalWrite(5,LOW); /*mutes the buzzer */
+  digitalWrite(4,LOW); /*mutes the buzzer */
   for (i = 0; i<5; i++)
   {        
   digitalWrite(2,LOW); delay(1000);/*sets LED 2 OFF */
@@ -89,10 +96,10 @@ int state2 (int state)
   printf("ALARM ARMED\n");
   for (;;) 
     {
-     printf("VALUE OF TRIGGER Alarm: %d\n",digitalRead(0));
+     printf("VALUE OF TRIGGER Alarm: %d\n",digitalRead(5));
      digitalWrite(1,LOW);/*sets LED 1 OFF */
      digitalWrite(2,HIGH); /*sets LED 2 ON */
-     digitalWrite(5,LOW); /*mutes the buzzer */
+     digitalWrite(4,LOW); /*mutes the buzzer */
   
      if (digitalRead(3) == 0) /* If the button is pressed */
      {
@@ -113,8 +120,8 @@ int state3(int state)
 {
   int i;
   wiringPiSetup();
-  digitalWrite(5,LOW); /*mutes the buzzer */
-  for (i=0;(i<5) && (digitalRead(0) == 1); i++){ 
+  digitalWrite(4,LOW); /*mutes the buzzer */
+  for (i=0;(i<5) && (digitalRead(3) == 1); i++){ 
   printf("ALARM_TRIGGERED");
   digitalWrite(1,HIGH);/*sets LED 1 ON */
   digitalWrite(2,HIGH); /*sets LED 2 ON */
@@ -132,22 +139,21 @@ int state3(int state)
 int state4(int state)
 {
  wiringPiSetup();
+ iffft("https://maker.ifttt.com/trigger/alarm_triggered/with/key/nAtR0mlz6FSWp52xT1BGw");
  printf("ALARM SOUNDING\n");
  for(;;)
  {
   digitalWrite(1,HIGH);/*sets LED 1 ON */
   digitalWrite(2,HIGH); /*sets LED 2 ON */
-  digitalWrite(5,HIGH); /*plays the buzzer */
+  digitalWrite(4,HIGH); /*plays the buzzer */
   delay(2000);
   digitalWrite(1,LOW);/*sets LED 1 OFF */
   digitalWrite(2,LOW); /*sets LED 2 OFF*/
-  digitalWrite(5,LOW); /*mutes the buzzer */
+  digitalWrite(4,LOW); /*mutes the buzzer */
   delay(2000);
   printf("INTRUDER ALERT!");
   if (digitalRead(3) == 0)
-   return state0(state); 
+   return 1; 
   }
  }
 }
-
- 
