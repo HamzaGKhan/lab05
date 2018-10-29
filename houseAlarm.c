@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
   pinMode (1, OUTPUT) ;/*LED 1*/
   pinMode (2, OUTPUT) ;/* LED 2*/
   pinMode (3,INPUT); /*Button*/
-  pinMode (4, INPUT) ;/*Buzzer */
+  pinMode (4, OUTPUT) ;/*Buzzer */
   pullUpDnControl(3,PUD_UP);
-  pinMode (5, OUTPUT); /*IR Scanner */
+  pinMode (0, INPUT); /*IR Scanner */
   state = 1;
   while (1) 
  {
@@ -92,10 +92,11 @@ int state1 (int state)
 int state2 (int state)
 {
   wiringPiSetup();
- if (state == 3) {
-  printf("ALARM ARMED\n");
-  for (;;) 
-    {
+ if (state == 3) 
+ {
+   printf("ALARM ARMED\n");
+   for (;;) 
+   {
      printf("VALUE OF TRIGGER Alarm: %d\n",digitalRead(5));
      digitalWrite(1,LOW);/*sets LED 1 OFF */
      digitalWrite(2,HIGH); /*sets LED 2 ON */
@@ -107,12 +108,14 @@ int state2 (int state)
          return 1;
      }
      if (digitalRead (0) == 1) /*if the alarm is triggered */
-      {
+     {
         printf("Alarm_TRIGGERED");
         return 4;
-      }
+     }
    }
-  return 0;
+   
+  }
+ return 0;
 }
 
 /*sets state to alarm triggered*/
@@ -139,9 +142,9 @@ int state3(int state)
 int state4(int state)
 {
  wiringPiSetup();
- iffft("https://maker.ifttt.com/trigger/alarm_triggered/with/key/nAtR0mlz6FSWp52xT1BGw");
+ ifttt("https://maker.ifttt.com/trigger/alarm_triggered/with/key/nAtR0mlz6FSWp52xT1BGw","test","Hamza","Passed");
  printf("ALARM SOUNDING\n");
- for(;;)
+ while(digitalRead(3)==1)
  {
   digitalWrite(1,HIGH);/*sets LED 1 ON */
   digitalWrite(2,HIGH); /*sets LED 2 ON */
@@ -155,5 +158,4 @@ int state4(int state)
   if (digitalRead(3) == 0)
    return 1; 
   }
- }
 }
